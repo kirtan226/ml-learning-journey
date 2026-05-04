@@ -5,3 +5,16 @@ __pycache__/
 .env
 venv/
 .idea/
+
+# Ignore Jupyter notebooks
+*.ipynb
+# Ignore checkpoint folders
+.ipynb_checkpoints/
+
+# Ignore data files (optional but recommended)
+*.data
+*.names
+
+
+# Ignore model files (optional)
+*.joblib
