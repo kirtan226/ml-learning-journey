@@ -1,5 +1,5 @@
 """
-Problem : Car Speed vs Fuel Efficiency
+Problem : Car Fuel Efficiency Prediction Using Polynomial Regression
 Model   : Polynomial Regression using LinearRegression
 """
 from pathlib import Path
@@ -16,7 +16,7 @@ from sklearn.preprocessing import PolynomialFeatures, StandardScaler
 
 
 DATA_PATH = "../../files/car_speed_mpg_dataset.xlsx"
-df = pd.read_excel(DATA_PATH, skiprows=2)
+df = pd.read_excel(DATA_PATH, header=2)
 
 # print("============ DF Head ============")
 # print(df.head())
@@ -45,7 +45,7 @@ x_train, x_test, y_train, y_test = train_test_split(
 
 
 pipeline = Pipeline([
-        ("imputer", SimpleImputer(strategy="most_frequent")),
+        ("imputer", SimpleImputer(strategy="median")),
         ("poly_features", PolynomialFeatures(degree=2, include_bias=False)),
         ("scaler", StandardScaler()),
         ("linear_regression", LinearRegression()),
@@ -55,7 +55,7 @@ pipeline.fit(x_train, y_train)
 y_pred = pipeline.predict(x_test)
 
 
-def evaluate_model(y_test, y_pred):
+def evaluate_model(pipeline, x_train, y_train, x_test, y_test, y_pred):
     r2 = r2_score(y_test, y_pred)
     mae = mean_absolute_error(y_test, y_pred)
     mse = mean_squared_error(y_test, y_pred)
@@ -75,6 +75,8 @@ def evaluate_model(y_test, y_pred):
     print(f"MSE      : {mse:.2f}")
     print(f"MAPE     : {mape:.1f}%")
 
+    print("== Pipeline score ==\ntrain Data:",pipeline.score(x_train, y_train),"\nTest Data:",pipeline.score(x_test, y_test))
+
 
 def plot_predictions(x_test, y_test, y_pred, pipeline):
     plt.figure(figsize=(8, 5))
@@ -88,9 +90,9 @@ def plot_predictions(x_test, y_test, y_pred, pipeline):
         columns=x_test.columns
     )
     x_line["speed_mph"] = speed_range  # only vary speed_mph
-
+    sorted_idx = np.argsort(speed_range)
     y_line = pipeline.predict(x_line)
-    plt.plot(speed_range, y_line, color="red", lw=2, label="Predicted MPG")
+    plt.plot(speed_range[sorted_idx], y_line, color="red", lw=2, label="Predicted MPG")
 
     plt.xlabel("Speed (mph)")
     plt.ylabel("Fuel Efficiency (mpg)")
@@ -112,7 +114,7 @@ def custom_prediction(pipeline, feature_columns):
     print(f"Predicted fuel efficiency: {predicted_mpg:.2f} mpg")
 
 
-evaluate_model(y_test, y_pred)
+evaluate_model(pipeline, x_train, y_train, x_test, y_test, y_pred)
 plot_predictions(x_test, y_test, y_pred, pipeline)
-custom_prediction(pipeline, x_train.columns.tolist())
+# custom_prediction(pipeline, x_train.columns.tolist())
 
