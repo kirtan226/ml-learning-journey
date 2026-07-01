@@ -45,6 +45,12 @@ print(f"Predicted Price for {predict_for_square_fit} sqft:", basic_prediction[0]
 x_multiple = data[['Size_sqft', 'Bedrooms', 'Age_years', 'Distance_city_km']]
 y_multiple = data[['Price']]
 
+
+# ==================================================
+# Problem 3: Train/Test Split + Evaluation
+# Using Basic Model
+# ==================================================
+
 x_multiple_train, x_multiple_test, y_multiple_train, y_multiple_test = train_test_split(
     x_multiple, y_multiple, test_size=0.2, random_state=42
 )
@@ -67,11 +73,6 @@ multiple_prediction = multiple_model.predict(multiple_custom_input)
 print("\n========== Problem 2: Multiple Linear Regression ==========")
 print("Predicted Price:", multiple_prediction[0][0])
 
-
-# ==================================================
-# Problem 3: Train/Test Split + Evaluation
-# Using Basic Model
-# ==================================================
 
 basic_y_pred = basic_model.predict(x_basic_test)
 print("y basic test ---",y_basic_test )
